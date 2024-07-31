@@ -15,6 +15,7 @@ import {
   collection,
   addDoc,
   getDocs,
+  updateDoc,
   setDoc,
   doc,
   Timestamp,
@@ -33,38 +34,65 @@ const currencies = [
   },
 ];
 
-function AddItemForm({ open, setOpen, getItems }) {
+function EditItemForm({ open, setOpen, current, getItems }) {
+  const [date, setDate] = useState(null);
+  const [showDate, setShowDate] = useState("");
+  const [checkedItem, setCheckedItem] = useState("");
+  const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
-  const [date, setDate] = useState(null);
   const [quantity, setQuantity] = useState("");
-  const [checkedItem, setCheckedItem] = useState("Pieces");
-  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    console.log("current", current);
+    if (current) {
+      let _date = new Date(current.date);
+      setCheckedItem(current.checkedItem);
+      setShowDate(_date.toLocaleDateString());
+      setName(current.name);
+      setCategory(current.category);
+      setQuantity(current.quantity);
+    }
+  }, [current]);
 
   const handleSubmit = async () => {
     setLoading(true);
     console.table(name, category, date, quantity, checkedItem);
 
-    let _date = date.toISOString();
+    let _date = "";
+
+    if (date) {
+      _date = date.toISOString();
+    } else {
+      _date = current.date;
+    }
+
+    console.log({
+      name,
+      category,
+      date: _date,
+      checkedItem: checkedItem,
+      quantity,
+    });
 
     try {
-      await setDoc(doc(db, "items", name.toLowerCase()), {
+      const itemRef = doc(db, "items", current.id);
+
+      await updateDoc(itemRef, {
         name,
         category,
         date: _date,
+        checkedItem: checkedItem,
         quantity,
-        checkedItem,
-        timestamp: Timestamp.now(),
       });
+      setOpen(false);
       setLoading(false);
       toast.success("Item added successfully");
-      setOpen(false);
       setName("");
       setCategory("");
       setQuantity("");
       setCheckedItem("");
       setDate(null);
-
       getItems();
     } catch (e) {
       setLoading(false);
@@ -72,10 +100,9 @@ function AddItemForm({ open, setOpen, getItems }) {
       console.error("Error adding document: ", e);
     }
   };
-
   return (
     <Dialog onClose={() => setOpen(false)} open={open}>
-      <DialogTitle>Add Item</DialogTitle>
+      <DialogTitle>Edit Item</DialogTitle>
       <Container className="w-96">
         <Stack className="p-4" spacing={4}>
           <TextField
@@ -109,6 +136,9 @@ function AddItemForm({ open, setOpen, getItems }) {
             </Select>
           </FormControl>
           <DatePicker value={date} onChange={(_date) => setDate(_date)} />
+          {showDate && (
+            <p className="pl-1 text-sm">{"Expiration Date: " + showDate}</p>
+          )}
           <TextField
             fullWidth
             required
@@ -136,39 +166,12 @@ function AddItemForm({ open, setOpen, getItems }) {
             />
           </FormGroup>
           <Button onClick={handleSubmit} fullWidth variant="contained">
-            {loading ? "Processing..." : "Add"}
+            {loading ? "Processing..." : "Edit"}
           </Button>
         </Stack>
       </Container>
-      {/* <List sx={{ pt: 0 }}>
-      {emails.map((email) => (
-        <ListItem disableGutters key={email}>
-          <ListItemButton onClick={() => handleListItemClick(email)}>
-            <ListItemAvatar>
-              <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
-                <PersonIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={email} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-      <ListItem disableGutters>
-        <ListItemButton
-          autoFocus
-          onClick={() => handleListItemClick('addAccount')}
-        >
-          <ListItemAvatar>
-            <Avatar>
-              <AddIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary="Add account" />
-        </ListItemButton>
-      </ListItem>
-    </List> */}
     </Dialog>
   );
 }
 
-export default AddItemForm;
+export default EditItemForm;
