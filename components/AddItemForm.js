@@ -33,7 +33,7 @@ const currencies = [
   },
 ];
 
-function AddItemForm({ open, setOpen, getItems }) {
+function AddItemForm({ open, setOpen, getItems, categories }) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [date, setDate] = useState(null);
@@ -49,7 +49,7 @@ function AddItemForm({ open, setOpen, getItems }) {
 
     try {
       await setDoc(doc(db, "items", name.toLowerCase()), {
-        name,
+        name: name.toLowerCase(),
         category,
         date: _date,
         quantity,
@@ -96,7 +96,7 @@ function AddItemForm({ open, setOpen, getItems }) {
               defaultValue="fruits"
               onChange={(e) => setCategory(e.target.value)}
             >
-              {currencies.map((option) => (
+              {categories.map((option) => (
                 <MenuItem
                   onChange={(e) => setCategory(e.target.value)}
                   defaultValue="fruits"

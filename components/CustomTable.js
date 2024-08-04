@@ -12,6 +12,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { doc, deleteDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { db } from "@/firebase";
+import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 
 function createData(name, category, unit, quantity, date) {
   return { name, category, unit, quantity, date };
@@ -116,8 +117,8 @@ export default function CustomTable({
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+    <Paper sx={{ marginToop: 16, width: "100%", overflow: "hidden" }}>
+      <TableContainer className="capitalize" sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -126,6 +127,7 @@ export default function CustomTable({
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
+                  // className="flex items-center space-x-2"
                 >
                   {column.label}
                 </TableCell>
@@ -150,8 +152,14 @@ export default function CustomTable({
                     })}
                     <TableCell align="right">
                       <div className="flex items-center justify-center space-x-2">
-                        <EditIcon onClick={() => openEdit(index)} />
-                        <DeleteIcon onClick={() => handleDelete(index)} />
+                        <EditIcon
+                          className="cursor-pointer hover:text-green-500"
+                          onClick={() => openEdit(index)}
+                        />
+                        <DeleteIcon
+                          className="cursor-pointer hover:text-red-500"
+                          onClick={() => handleDelete(index)}
+                        />
                       </div>
                     </TableCell>
                   </TableRow>

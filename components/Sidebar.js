@@ -45,23 +45,6 @@ function Sidebar({ drawerWidth }) {
             </ListItem>
           ))}
         </List>
-        <Divider />
-        <List>
-          {[{ title: "Shopping List", link: "shopping-list" }].map(
-            (item, index) => (
-              <ListItem key={item.title} disablePadding>
-                <Link href={item.link}>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      {index % 2 === 0 ? <ShoppingBasketIcon /> : <MailIcon />}
-                    </ListItemIcon>
-                    <ListItemText primary={item.title} />
-                  </ListItemButton>
-                </Link>
-              </ListItem>
-            )
-          )}
-        </List>
       </Box>
     </Drawer>
   );

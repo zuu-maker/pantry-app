@@ -79,7 +79,7 @@ function EditItemForm({ open, setOpen, current, getItems }) {
       const itemRef = doc(db, "items", current.id);
 
       await updateDoc(itemRef, {
-        name,
+        name: name.toLowerCase(),
         category,
         date: _date,
         checkedItem: checkedItem,
